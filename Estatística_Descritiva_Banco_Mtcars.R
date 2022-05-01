@@ -1,12 +1,12 @@
-###### Análise Estatística do Banco mtcars do R4.0 #####################################################################
-###### Objetivo: Análise do Consumo Médio de Combustível de Carros Modelos 1973/1974
-###### Descrição: o conjunto de dados, denominado de mtcars, foi obtido a partir das edições de março, abril, junho e julho de 1974 da revista Motor Trend para um estudo realizado por Hocking (1976) e posteriormente, reportado por Henderson e Velleman (1981)
+###### An?lise Estat?stica do Banco mtcars do R4.0 #####################################################################
+###### Objetivo: An?lise do Consumo M?dio de Combust?vel de Carros Modelos 1973/1974
+###### Descri??o: o conjunto de dados, denominado de mtcars, foi obtido a partir das edi??es de mar?o, abril, junho e julho de 1974 da revista Motor Trend para um estudo realizado por Hocking (1976) e posteriormente, reportado por Henderson e Velleman (1981)
 
-####### INTRODUÇÃO #####################################################################################
-# Na crise petrolífera de 1973, membros da Organização dos Países Árabes Exportadores de Petróleo (OPAEP) aplicaram sanções em protesto ao apoio dos Estados Unidos e outras nações à Israel durante a Guerra do Yom Kippur.
-# O conflito resultou no aumento do preço do petróleo de três dólares por barril para cerca de 12 doláres no mundo inteiro, sendo que os preços fixados para os Estados Unidos foram ainda maiores.
-# Como uma alternativa à alta do preço do petróleo no mercado mundial, os Estados Unidos iniciaram um programa de eficiência energética, conhecido como Corporate Average Fuel Economy (CAFE), com o propósito de reduzir o consumo de combustível de carros, pick-ups, minivans e SUVs (Almeida Filho, 2018)
-# O conjunto de dados, denominado de mtcars,está disponível na biblioteca datasets do software R para consulta.
+####### INTRODUÃ‡ÃƒO #####################################################################################
+# Na crise petrol?fera de 1973, membros da Organiza??o dos Pa?ses ?rabes Exportadores de Petr?leo (OPAEP) aplicaram san??es em protesto ao apoio dos Estados Unidos e outras na??es ? Israel durante a Guerra do Yom Kippur.
+# O conflito resultou no aumento do pre?o do petr?leo de tr?s d?lares por barril para cerca de 12 dol?res no mundo inteiro, sendo que os pre?os fixados para os Estados Unidos foram ainda maiores.
+# Como uma alternativa ? alta do pre?o do petr?leo no mercado mundial, os Estados Unidos iniciaram um programa de efici?ncia energ?tica, conhecido como Corporate Average Fuel Economy (CAFE), com o prop?sito de reduzir o consumo de combust?vel de carros, pick-ups, minivans e SUVs (Almeida Filho, 2018)
+# O conjunto de dados, denominado de mtcars,est? dispon?vel na biblioteca datasets do software R para consulta.
 
 ##########################################################################################################
 
@@ -18,32 +18,36 @@ library(kableExtra)
 library(ggplot2)
 library(plotly)
 library(gridExtra)
+library(ggcorrplot)
 library(gtsummary)
 library(xtable)
 library(PerformanceAnalytics)
 library(readxl)
+library(corrplot)
+library(Hmisc)
+library(PerformanceAnalytics)
 #######################################################################################################
 
 
-###### ANÁLISE EXAPLORATÓRIA DE DADOS #################################################################
-###### As variáveis observadas no conjunto de dados são definidas como:
-# Variável Resposta (Y): 
-#  1) mpg: eficiência (milhas por galão de combustível).
-# Variáveis Explicativas(X): 
-#  1) cyl: número de cilindros.
-#  2) disp: cilindradas (polegada cúbica).
-#  3) hp: potência bruta (HP).
-#  4) drat: relação de eixo traseiro.
+###### AN?LISE EXAPLORAT?RIA DE DADOS #################################################################
+###### As vari?veis observadas no conjunto de dados s?o definidas como:
+# Vari?vel Resposta (Y): 
+#  1) mpg: efici?ncia (milhas por gal?o de combust?vel).
+# Vari?veis Explicativas(X): 
+#  1) cyl: n?mero de cilindros.
+#  2) disp: cilindradas (polegada c?bica).
+#  3) hp: pot?ncia bruta (HP).
+#  4) drat: rela??o de eixo traseiro.
 #  5) wt: peso (1000 libras).
 #  6) qsec: tempo no quarto de milha (segundos).
 #  7) vs: formato do motor (0 = V e 1 = linha).
-#  8) am: tipo de transmissão (0 = automático e 1 = manual).
-#  9) gear: número de marchas para frente.
-# 10) carb: número de carburadores.
+#  8) am: tipo de transmiss?o (0 = autom?tico e 1 = manual).
+#  9) gear: n?mero de marchas para frente.
+# 10) carb: n?mero de carburadores.
 ######################################################################################################
 
 
-############ Estatística Descritiva ##################################################################
+############ EstatÃ­stica Descritiva ##################################################################
 head(mtcars)
 summary(mtcars)
 
@@ -59,14 +63,72 @@ resumo <- mtcars %>%
                     Q3=~quantile(.,0.75),maxi=~max(.))) %>% 
   mutate_if(is.numeric, format, digits=3,nsmall = 2)
 
-colnames(resumo) <- c('Variável', 'Missing', 'Média',
-                      'Desvio padrão', 'Mínimo', 'Q1',
-                      'Mediana', 'Q3', 'Máximo')
-kbl(resumo, booktabs = T, caption = 'Estatísticas descritivas daS Características Quantitativa', longtable = T) %>% 
+colnames(resumo) <- c('Vari?vel', 'Missing', 'M?dia',
+                      'Desvio padr?o', 'M?nimo', 'Q1',
+                      'Mediana', 'Q3', 'M?ximo')
+kbl(resumo, booktabs = T, caption = 'Estat?sticas descritivas daS Caracter?sticas Quantitativa', longtable = T) %>% 
   kable_styling(position = 'center',latex_options = c("striped", "hold_position"))
 ###################################################################################################
 
-###### Correlograma das variáveis explicativas #####################################
+
+###### Correlograma das variaveis explicativas #####################################
+
+# Matriz de CorrelaÃ§Ã£o
+cor(mtcars)
+
+# Gr?fico da Matriz de Correla??o
+correl = cor(mtcars)
+ggcorrplot(correl)
+
+
+# Grafico Customizado
+# method = "square" (padrÃ£o) 
+# method = estilos (circle)
+
+# hac.order = agrupamento hierqrquico
+# type = esconder espelhamento
+  #type = upper, lower
+# lab = adicionar o valor da correlacao
+# lab_size = ajustar a fonte ao tamanho
+# p.mat = excluindo o coeiciente nao significante
+# insig = "blank" deixar em branco coef nÃ£o significante
+
+
+ggcorrplot(correl, 
+           method = "square",
+           hc.order = TRUE,
+           type = "lower",
+           lab = TRUE,
+           lab_size = 3.0,
+           colors= c("firebrick", "white", "dodgerblue4"),
+           outline.color = "white",
+           title = "Matriz de CorrelaÃ§Ã£o",
+           ggtheme = theme_gray()
+)
+
+
+
+# Teste t para CorelaÃ§Ã£o
+# P-valor das correlaÃ§Ãµes
+cor_pmat(mtcars)
+
+# Grafico da Matriz de P-valor
+ggcorrplot(correl,
+           method = "square",
+           hc.order = TRUE,
+           type= "lower",
+           lab = TRUE,
+           lab_size = 3.0,
+           p.mat = cor_pmat(mtcars),
+           colors= c("firebrick", "white", "dodgerblue4"),
+           outline.color = "white",
+           title = "Matriz de CorrelaÃ§Ã£o",
+           ggtheme = theme_gray
+)
+
+
+
+
 mtcars %>% 
   select(-vs,-am, -mpg) %>% 
   ggpairs() 
@@ -74,82 +136,82 @@ mtcars %>%
 
 
 
-###### Gráfico de Dispersão ##########################################
-###### Gráfico 1 #####################################################
+###### Grafico de Dispers?o ##########################################
+###### Grafico 1 #####################################################
 fig1 <- mtcars %>% 
   ggplot(aes(x=cyl,y=mpg)) +
   geom_point() +
-  labs(x = 'Número de cilindros', y = 'Eficiência (mpg)')+ 
+  labs(x = 'N?mero de cilindros', y = 'Efici?ncia (mpg)')+ 
   geom_smooth(method = lm, se = FALSE)
 fig1
 ######################################################################
 
-###### Gráfico 2 #####################################################
+###### Gr?fico 2 #####################################################
 fig2 <- mtcars %>% 
   ggplot(aes(x=disp,y=mpg)) +
   geom_point() +
-  labs(x = 'Cilindradas (in^3)', y = 'Eficiência (mpg)')+ 
+  labs(x = 'Cilindradas (in^3)', y = 'Efici?ncia (mpg)')+ 
   geom_smooth(method = lm, se = FALSE)
 fig2
 ######################################################################
 
-###### Gráfico 3 #####################################################
+###### Gr?fico 3 #####################################################
 fig3 <- mtcars %>% 
   ggplot(aes(x=hp,y=mpg)) +
   geom_point() +
-  labs(x = 'Potência (HP)', y = 'Eficiência (mpg)') + 
+  labs(x = 'Pot?ncia (HP)', y = 'Efici?ncia (mpg)') + 
   geom_smooth(method = lm, se = FALSE)
 fig3
 ######################################################################
 
 
-###### Gráfico 4 #####################################################
+###### Gr?fico 4 #####################################################
 fig4 <- mtcars %>% 
   ggplot(aes(x=drat,y=mpg)) +
   geom_point() +
-  labs(x = 'Relação de Eixo T', y = 'Eficiência (mpg)') + 
+  labs(x = 'Rela??o de Eixo T', y = 'Efici?ncia (mpg)') + 
   geom_smooth(method = lm, se = FALSE)
 fig4
 ######################################################################
 
-###### Gráfico 5 #####################################################
+###### Gr?fico 5 #####################################################
 fig5 <- mtcars %>% 
   ggplot(aes(x=wt,y=mpg)) +
   geom_point() +
-  labs(x = 'Peso (1000 lb)', y = 'Eficiência (mpg)')+ 
+  labs(x = 'Peso (1000 lb)', y = 'Efici?ncia (mpg)')+ 
   geom_smooth(method = lm, se = FALSE)
 fig5
 ######################################################################
 
 
-###### Gráfico 6 #####################################################
+###### Gr?fico 6 #####################################################
 fig6 <- mtcars %>% 
   ggplot(aes(x=qsec,y=mpg)) +
   geom_point() +
-  labs(x = 'Tempo (s)', y = 'Eficiência (mpg)') + 
+  labs(x = 'Tempo (s)', y = 'Efici?ncia (mpg)') + 
   geom_smooth(method = lm, se = FALSE)
 fig6
 ######################################################################
 
-###### Gráfico 7 #####################################################
+###### Gr?fico 7 #####################################################
 fig7 <- mtcars %>% 
   ggplot(aes(x=gear,y=mpg)) +
   geom_point() +
-  labs(x = 'Número de Marchas', y = 'Eficiência (mpg)') + 
+  labs(x = 'N?mero de Marchas', y = 'Efici?ncia (mpg)') + 
   geom_smooth(method = lm, se = FALSE)
 fig7
 ######################################################################
 
-###### Gráfico 8 #####################################################
+###### Gr?fico 8 #####################################################
 fig8 <- mtcars %>% 
   ggplot(aes(x=carb,y=mpg)) +
   geom_point() +
-  labs(x = 'Número de Carburadores', y = 'Eficiência (mpg)') + 
+  labs(x = 'N?mero de Carburadores', y = 'Efici?ncia (mpg)') + 
   geom_smooth(method = lm, se = FALSE)
 fig8
 ######################################################################
 
-###### Gráfico Agrupado #####################################################
+###### Gr?fico Agrupado #####################################################
 
 grid.arrange(fig2, fig3, fig4, fig5, fig6, ncol = 3, nrow = 2)
 grid.arrange(fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8, ncol = 3, nrow = 3)
@@ -157,119 +219,119 @@ grid.arrange(fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8, ncol = 3, nrow = 3)
 
 
 
-###### Gráfico de Dispersão com Pontos Estratificados ################################
-###### Gráfico 2 #####################################################
+###### Gr?fico de Dispers?o com Pontos Estratificados ################################
+###### Gr?fico 2 #####################################################
 ffig2 <- mtcars %>% 
   ggplot(aes(x=disp,y=mpg)) +
   geom_point(aes(colour = factor(cyl))) +
   geom_smooth(method = lm, aes(colour = factor(cyl)), se = FALSE) +
-  labs(x = 'Cilindradas (in^3)', y = 'Eficiência (mpg)') + 
+  labs(x = 'Cilindradas (in^3)', y = 'Efici?ncia (mpg)') + 
   theme(legend.position = 'none')
 ffig2
 ######################################################################
 
 
-###### Gráfico 3 #####################################################
+###### Gr?fico 3 #####################################################
 ffig3 <- mtcars %>% 
   ggplot(aes(x=hp,y=mpg)) +
   geom_point(aes(colour = factor(cyl))) +
   geom_smooth(method = lm, aes(colour = factor(cyl)), se = FALSE) +
-  labs(x = 'Potência (HP)', y = 'Eficiência (mpg)') +
+  labs(x = 'Pot?ncia (HP)', y = 'Efici?ncia (mpg)') +
   theme(legend.position = 'none')
 ffig3
 ######################################################################
 
 
-###### Gráfico 4 #####################################################
+###### Gr?fico 4 #####################################################
 ffig4 <- mtcars %>% 
   ggplot(aes(x=drat,y=mpg)) +
   geom_point(aes(colour = factor(cyl))) +
   geom_smooth(method = lm, aes(colour = factor(cyl)), se = FALSE) +
-  labs(x = 'Relação de eixo traseiro', y = 'Eficiência (mpg)') +
+  labs(x = 'Rela??o de eixo traseiro', y = 'Efici?ncia (mpg)') +
   theme(legend.position = 'none')
 ffig4
 ######################################################################
 
 
-###### Gráfico 5 #####################################################
+###### Gr?fico 5 #####################################################
 ffig5 <- mtcars %>% 
   ggplot(aes(x=wt,y=mpg)) +
   geom_point(aes(colour = factor(cyl))) +
   geom_smooth(method = lm, aes(colour = factor(cyl)), se = FALSE) +
-  labs(x = 'Peso (1000 lb)', y = 'Eficiência (mpg)') +
+  labs(x = 'Peso (1000 lb)', y = 'Efici?ncia (mpg)') +
   theme(legend.position = 'none')
 ffig5
 ######################################################################
 
-###### Gráfico 6 #####################################################
+###### Gr?fico 6 #####################################################
 ffig6 <- mtcars %>% 
   ggplot(aes(x=qsec,y=mpg)) +
   geom_point(aes(colour = factor(cyl))) +
   #geom_smooth(method = "lm", se = FALSE, colour = "black") +
   geom_smooth(method = lm, aes(colour = factor(cyl)), se = FALSE) +
-  labs(x = 'Tempo (s)', y = 'Eficiência (mpg)') +
+  labs(x = 'Tempo (s)', y = 'Efici?ncia (mpg)') +
   theme(legend.position = 'none')
 ######################################################################
 
-###### Gráfico 7 #####################################################
+###### Gr?fico 7 #####################################################
 ffig7 <- mtcars %>% 
   ggplot(aes(x=gear,y=mpg)) +
   geom_point(aes(colour = factor(cyl))) +
   geom_smooth(method = lm, aes(colour = factor(cyl)), se = FALSE) +
-  labs(x = 'Número de marchas', y = 'Eficiência (mpg)') +
+  labs(x = 'N?mero de marchas', y = 'Efici?ncia (mpg)') +
   theme(legend.position = 'none')
 ffig7
 ######################################################################
 
 
-###### Gráfico 8 #####################################################
+###### Gr?fico 8 #####################################################
 ffig8 <- mtcars %>% 
   ggplot(aes(x=carb,y=mpg)) +
   geom_point(aes(colour = factor(cyl))) +
   geom_smooth(method = lm, aes(colour = factor(cyl)), se = FALSE) +
-  labs(x = 'Número de carburadores', y = 'Eficiência (mpg)')
+  labs(x = 'N?mero de carburadores', y = 'Efici?ncia (mpg)')
 ffig8
 ######################################################################
-####### Gráfico de dispersão com pontos estratificados pelo (Número de Cilindros)
+####### Gr?fico de dispers?o com pontos estratificados pelo (N?mero de Cilindros)
 
 grid.arrange(ffig2, ffig3, ffig4, ffig5, ffig6, ffig7, ffig8,
              ncol = 2, nrow = 4)
 ##################################################################################
 
-###### Gráfico de Dispersão com pontos Estratificados ############################
+###### Gr?fico de Dispers?o com pontos Estratificados ############################
 ffig1 <- mtcars %>% 
   ggplot(aes(x=cyl,y=mpg)) +
   geom_point(aes(colour = factor(vs))) +
   geom_smooth(method = lm, aes(colour = factor(vs)), se = FALSE) +
-  labs(x = 'Número de cilindros', y = 'Eficiência (mpg)') +  
+  labs(x = 'N?mero de cilindros', y = 'Efici?ncia (mpg)') +  
   theme(legend.position = 'none')
 
 ffig2 <- mtcars %>% 
   ggplot(aes(x=disp,y=mpg)) +
   geom_point(aes(colour = factor(vs))) +
   geom_smooth(method = lm, aes(colour = factor(vs)), se = FALSE) +
-  labs(x = 'Cilindradas (in^3)', y = 'Eficiência (mpg)') + 
+  labs(x = 'Cilindradas (in^3)', y = 'Efici?ncia (mpg)') + 
   theme(legend.position = 'none')
 
 ffig3 <- mtcars %>% 
   ggplot(aes(x=hp,y=mpg)) +
   geom_point(aes(colour = factor(vs))) +
   geom_smooth(method = lm, aes(colour = factor(vs)), se = FALSE) +
-  labs(x = 'Potência (HP)', y = 'Eficiência (mpg)') + 
+  labs(x = 'Pot?ncia (HP)', y = 'Efici?ncia (mpg)') + 
   theme(legend.position = 'none')
 
 ffig4 <- mtcars %>% 
   ggplot(aes(x=drat,y=mpg)) +
   geom_point(aes(colour = factor(vs))) +
   geom_smooth(method = lm, aes(colour = factor(vs)), se = FALSE) +
-  labs(x = 'Relação de eixo traseiro', y = 'Eficiência (mpg)') + 
+  labs(x = 'Rela??o de eixo traseiro', y = 'Efici?ncia (mpg)') + 
   theme(legend.position = 'none')
 
 ffig5 <- mtcars %>% 
   ggplot(aes(x=wt,y=mpg)) +
   geom_point(aes(colour = factor(vs))) +
   geom_smooth(method = lm, aes(colour = factor(vs)), se = FALSE) +
-  labs(x = 'Peso (1000 lb)', y = 'Eficiência (mpg)') + 
+  labs(x = 'Peso (1000 lb)', y = 'Efici?ncia (mpg)') + 
   theme(legend.position = 'none')
 
 ffig6 <- mtcars %>% 
@@ -277,66 +339,66 @@ ffig6 <- mtcars %>%
   geom_point(aes(colour = factor(vs))) +
   #geom_smooth(method = "lm", se = FALSE, colour = "black") +
   geom_smooth(method = lm, aes(colour = factor(vs)), se = FALSE) +
-  labs(x = 'Tempo (s)', y = 'Eficiência (mpg)') + 
+  labs(x = 'Tempo (s)', y = 'Efici?ncia (mpg)') + 
   theme(legend.position = 'none')
 
 ffig7 <- mtcars %>% 
   ggplot(aes(x=gear,y=mpg)) +
   geom_point(aes(colour = factor(vs))) +
   geom_smooth(method = lm, aes(colour = factor(vs)), se = FALSE) +
-  labs(x = 'Número de marchas', y = 'Eficiência (mpg)') + 
+  labs(x = 'N?mero de marchas', y = 'Efici?ncia (mpg)') + 
   theme(legend.position = 'none')
 
 ffig8 <- mtcars %>% 
   ggplot(aes(x=carb,y=mpg)) +
   geom_point(aes(colour = factor(vs))) +
   geom_smooth(method = lm, aes(colour = factor(vs)), se = FALSE) +
-  labs(x = 'Número de carburadores', y = 'Eficiência (mpg)') + 
+  labs(x = 'N?mero de carburadores', y = 'Efici?ncia (mpg)') + 
   theme(legend.position = 'top')
 
 ##################################################################################
-# Gráfico de dispersão com pontos estratificados pelo (Formato do Motor)
+# Gr?fico de dispers?o com pontos estratificados pelo (Formato do Motor)
 grid.arrange(ffig1, ffig2, ffig3, ffig4, ffig5, ffig6, ffig7, ffig8,
              ncol = 2, nrow = 4)
 ####################################################################################
 
 
-###### Gráfico de dispersão com pontos estratificados ################################
-# Gráfico de dispersão com pontos estratificados pelo (Tipo de Transmissão)
+###### Gr?fico de dispers?o com pontos estratificados ################################
+# Gr?fico de dispers?o com pontos estratificados pelo (Tipo de Transmiss?o)
 
 ffig1 <- mtcars %>% 
   ggplot(aes(x=cyl,y=mpg)) +
   geom_point(aes(colour = factor(am))) +
   geom_smooth(method = lm, aes(colour = factor(am)), se = FALSE) +
-  labs(x = 'Número de cilindros', y = 'Eficiência (mpg)') +  
+  labs(x = 'N?mero de cilindros', y = 'Efici?ncia (mpg)') +  
   theme(legend.position = 'none')
 
 ffig2 <- mtcars %>% 
   ggplot(aes(x=disp,y=mpg)) +
   geom_point(aes(colour = factor(am))) +
   geom_smooth(method = lm, aes(colour = factor(am)), se = FALSE) +
-  labs(x = 'Cilindradas (in^3)', y = 'Eficiência (mpg)') +  
+  labs(x = 'Cilindradas (in^3)', y = 'Efici?ncia (mpg)') +  
   theme(legend.position = 'none')
 
 ffig3 <- mtcars %>% 
   ggplot(aes(x=hp,y=mpg)) +
   geom_point(aes(colour = factor(am))) +
   geom_smooth(method = lm, aes(colour = factor(am)), se = FALSE) +
-  labs(x = 'Potência (HP)', y = 'Eficiência (mpg)') +  
+  labs(x = 'Pot?ncia (HP)', y = 'Efici?ncia (mpg)') +  
   theme(legend.position = 'none')
 
 ffig4 <- mtcars %>% 
   ggplot(aes(x=drat,y=mpg)) +
   geom_point(aes(colour = factor(am))) +
   geom_smooth(method = lm, aes(colour = factor(am)), se = FALSE) +
-  labs(x = 'Relação de eixo traseiro', y = 'Eficiência (mpg)') +  
+  labs(x = 'Rela??o de eixo traseiro', y = 'Efici?ncia (mpg)') +  
   theme(legend.position = 'none')
 
 ffig5 <- mtcars %>% 
   ggplot(aes(x=wt,y=mpg)) +
   geom_point(aes(colour = factor(am))) +
   geom_smooth(method = lm, aes(colour = factor(am)), se = FALSE) +
-  labs(x = 'Peso (1000 lb)', y = 'Eficiência (mpg)') +  
+  labs(x = 'Peso (1000 lb)', y = 'Efici?ncia (mpg)') +  
   theme(legend.position = 'none')
 
 ffig6 <- mtcars %>% 
@@ -344,24 +406,24 @@ ffig6 <- mtcars %>%
   geom_point(aes(colour = factor(am))) +
   #geom_smooth(method = "lm", se = FALSE, colour = "black") +
   geom_smooth(method = lm, aes(colour = factor(am)), se = FALSE) +
-  labs(x = 'Tempo (s)', y = 'Eficiência (mpg)') +  
+  labs(x = 'Tempo (s)', y = 'Efici?ncia (mpg)') +  
   theme(legend.position = 'none')
 
 ffig7 <- mtcars %>% 
   ggplot(aes(x=gear,y=mpg)) +
   geom_point(aes(colour = factor(am))) +
   geom_smooth(method = lm, aes(colour = factor(am)), se = FALSE) +
-  labs(x = 'Número de marchas', y = 'Eficiência (mpg)') +  
+  labs(x = 'N?mero de marchas', y = 'Efici?ncia (mpg)') +  
   theme(legend.position = 'none')
 
 ffig8 <- mtcars %>% 
   ggplot(aes(x=carb,y=mpg)) +
   geom_point(aes(colour = factor(am))) +
   geom_smooth(method = lm, aes(colour = factor(am)), se = FALSE) +
-  labs(x = 'Número de carburadores', y = 'Eficiência (mpg)') +  
+  labs(x = 'N?mero de carburadores', y = 'Efici?ncia (mpg)') +  
   theme(legend.position = 'top')
 
-# Gráfico de dispersão com pontos estratificados pelo tipo de transmissão
+# Gr?fico de dispers?o com pontos estratificados pelo tipo de transmiss?o
 grid.arrange(ffig1, ffig2, ffig3, ffig4, ffig5, ffig6, ffig7, ffig8,
              ncol = 2, nrow = 4)
 #################################################################################
@@ -371,81 +433,81 @@ grid.arrange(ffig1, ffig2, ffig3, ffig4, ffig5, ffig6, ffig7, ffig8,
 fig9 <- mtcars %>% 
   ggplot(aes(x=as.factor(cyl),y=mpg)) +
   geom_boxplot() +
-  labs(x = 'Número de cilindros', y = 'Eficiência (mpg)') 
+  labs(x = 'N?mero de cilindros', y = 'Efici?ncia (mpg)') 
 fig9
 ################################################################################
 
 fig10 <- mtcars %>% 
   ggplot(aes(x=as.factor(vs),y=mpg)) +
   geom_boxplot() +
-  labs(x = 'Formato do motor', y = 'Eficiência (mpg)') 
+  labs(x = 'Formato do motor', y = 'Efici?ncia (mpg)') 
 
 fig11 <- mtcars %>% 
   ggplot(aes(x=as.factor(am),y=mpg)) +
   geom_boxplot() +
-  labs(x = 'Tipo de transmissão', y = 'Eficiência (mpg)') 
+  labs(x = 'Tipo de transmiss?o', y = 'Efici?ncia (mpg)') 
 
 fig12 <- mtcars %>% 
   ggplot(aes(x=as.factor(gear),y=mpg)) +
   geom_boxplot() +
-  labs(x = 'Número de marchas', y = 'Eficiência (mpg)') 
+  labs(x = 'N?mero de marchas', y = 'Efici?ncia (mpg)') 
 
 fig13 <- mtcars %>% 
   mutate(carb_novo=ifelse(carb<=2,0,1)) %>% 
   ggplot(aes(x=as.factor(carb_novo),y=mpg)) +
   geom_boxplot() +
-  labs(x = 'Número de carburadores', y = 'Eficiência (mpg)') 
+  labs(x = 'N?mero de carburadores', y = 'Efici?ncia (mpg)') 
 
 grid.arrange(fig10, fig11, ncol = 2, nrow = 1)
 ############################################################################
 
 ####################################################################
-######### A função select() é utilizada para selecionar as variáveis de interesse
+######### A fun??o select() ? utilizada para selecionar as vari?veis de interesse
 novo=select(mtcars, mpg, cyl)
 
-#No exemplo são selecionadas todas as variáveis excluindo mpg:
+#No exemplo s?o selecionadas todas as vari?veis excluindo mpg:
 novo=select(mtcars, -c(mpg))
 
-#É possível selecionar uma sequência de variáveis a partir de seus nomes
+#? poss?vel selecionar uma sequ?ncia de vari?veis a partir de seus nomes
 novo=select(mtcars, cyl:drat)
 
 
-######## A Função filter() seleciona as variáveis da base de dados
+######## A Fun??o filter() seleciona as vari?veis da base de dados
 novo=filter(mtcars, hp>146)
 
-#mais de um critério de filtragem de
+#mais de um crit?rio de filtragem de
 novo=filter(mtcars, hp>146 & am==1)
 
-####### A função mutate() é utilizada para incluir informações ou variáveis na base de dados
+####### A fun??o mutate() ? utilizada para incluir informa??es ou vari?veis na base de dados
 novo=mutate(mtcars, novacol=(mpg*100))
 
-####### A função summarise() é uma poderosa ferrarmenta para agregar sumarizações unindo diversos cálculos ao longo de uma base de dados
+####### A fun??o summarise() ? uma poderosa ferrarmenta para agregar sumariza??es unindo diversos c?lculos ao longo de uma base de dados
 summarise(mtcars,
           media.hp=mean(hp),
           qtd.hp=length(hp),
           qtdunico.hp=length(unique(hp)))
 
-###### Ainda, é possível agrupar as informações com a função group_by() ao mesmo tempo em que são efetuados cálculos adjacentes
+###### Ainda, ? poss?vel agrupar as informa??es com a fun??o group_by() ao mesmo tempo em que s?o efetuados c?lculos adjacentes
 summarise(group_by(mtcars, cyl.agrup=cyl),
           hp.medio=mean(hp),
           wt.medio=mean(wt),
           qtd=n())
 
-###### A função count() é utilizada para sumarizar a contagem de determinados objetos dentro de uma variável do banco de dados
+###### A fun??o count() ? utilizada para sumarizar a contagem de determinados objetos dentro de uma vari?vel do banco de dados
 count(mtcars, cyl)
 
-###### A função arrange() ordena a base de dados de acordo com o ordenamento da variável escolhida
+###### A fun??o arrange() ordena a base de dados de acordo com o ordenamento da vari?vel escolhida
 novo=arrange(mtcars, cyl)
 
-###### Ainda é possível indicar mais de uma variável para este ordenamento, bem como utilizar a função desc() para organizar em ordem descrescente:
+###### Ainda ? poss?vel indicar mais de uma vari?vel para este ordenamento, bem como utilizar a fun??o desc() para organizar em ordem descrescente:
 novo=arrange(mtcars, mpg, desc(disp))
 head
 ###################################################################
 
-###### O operador pipe (símbolos %>%) #############################
-#Abaixo segue um exemplo, onde o objetivo é filtrar os
-#veículos com transmissão manual (am == 1), agrupando-os pela quantidade
-#de cilindros ("cyl") e em seguida retomando a média das variáveis "drat" e
+###### O operador pipe (s?mbolos %>%) #############################
+#Abaixo segue um exemplo, onde o objetivo ? filtrar os
+#ve?culos com transmiss?o manual (am == 1), agrupando-os pela quantidade
+#de cilindros ("cyl") e em seguida retomando a m?dia das vari?veis "drat" e
 #"hp" para cada grupamento:
 
 novo = mtcars %>%
@@ -461,20 +523,20 @@ novo
 ########### Pacote ggplot2 + plotly ##############################################
 # Banco de Dados, Motor Trend Car Road Tests (mtcars)
 
-#A função aes() descreve como as variáveis são mapeadas em aspectos visuais de formas geométricas definidas pelos geoms
+#A fun??o aes() descreve como as vari?veis s?o mapeadas em aspectos visuais de formas geom?tricas definidas pelos geoms
 ggplot(data = mtcars, aes(x = disp, y = mpg)) + 
   geom_point()
 
-#Agora, a variável am (tipo de transmissão) foi mapeada à cor dos pontos, sendo que pontos vermelhos correspondem à transmissão automática (valor 0) e pontos azuis à transmissão manual (valor 1)
+#Agora, a vari?vel am (tipo de transmiss?o) foi mapeada ? cor dos pontos, sendo que pontos vermelhos correspondem ? transmiss?o autom?tica (valor 0) e pontos azuis ? transmiss?o manual (valor 1)
 ggplot(data = mtcars, aes(x = disp, y = mpg, colour = as.factor(am))) + 
   geom_point()
 
-# No entanto, tambem podemos mapear uma variável contínua à cor dos pontos
+# No entanto, tambem podemos mapear uma vari?vel cont?nua ? cor dos pontos
 ggplot(mtcars, aes(x = disp, y = mpg, colour = cyl)) + 
   geom_point()
 
 
-####### Também podemos mapear o tamanho dos pontos à uma variável de interesse:
+####### Tamb?m podemos mapear o tamanho dos pontos ? uma vari?vel de interesse:
 ggplot(mtcars, aes(x = disp, y = mpg, colour = cyl, size = wt)) +
   geom_point()
 
